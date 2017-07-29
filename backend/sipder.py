@@ -6,19 +6,29 @@
 import json
 import time
 
+from gevent import monkey; monkey.patch_socket()
+import gevent
+
 import requests
-from core.view import app
+from manage import app
+
+DATA_LIST = []
+
+def request_data(url, name):
+    data_dict = requests.get(url).json()
+    data_dict['name'] = name
+    print(data_dict)
+    global DATA_LIST
+    DATA_LIST.append(data_dict)
 
 def get_data():
-    data_list = []
+    global DATA_LIST
     lottery_dict = app.config.get("LOTTERY_DICR")
     for url, name in lottery_dict.items():
-        data_dict = requests.get(url).json()
-        data_dict['name'] = name
-        print(data_dict)
-        data_list.append(data_dict)
+        g = gevent.spawn(request_data, url, name)
+        g.join()
 
-    return data_list
+    return DATA_LIST
 
 
 

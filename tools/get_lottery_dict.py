@@ -6,11 +6,12 @@
 
 import os
 import json
-from config.setting import MASTER_URL
+from config import Config
 
 from bs4 import BeautifulSoup
-from config.setting import BASE_DIR
+from config import basedir as BASE_DIR
 
+MASTER_URL = Config.MASTER_URL
 
 def open_html(filename):
     html = open(filename, 'r', encoding='utf-8').read()
