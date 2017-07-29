@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 {% block title %}Flasky{% endblock %}
 
@@ -6,4 +7,21 @@
 <div class="page-header">
     <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
 </div>
+ <div class="col-md-4">
+    {{ wtf.quick_form(form) }}
+</div>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+    <br/>
+ {% for info in alarm_info %}
+    {{ info }}
+ {% endfor %}
 {% endblock %}
+
+
+
+
+
+
+

@@ -41,4 +41,12 @@ nosetests.xml
 # Virtual environment
 venv
 
-config.py
+
+.idea/dataSources/6cd64ca3-b6c2-4945-b72e-1c95ffaf5da5/_metadata_/metadata.values.at
+.idea/workspace.xml
+.idea/dataSources.local.xml
+.idea/dataSources.xml
+.idea/dataSources/9c5922ff-ca1f-496a-bdcb-239719682545.xml
+.idea/dataSources/f8a3bcfc-9a23-4bbd-90f4-6a833a0a4425.xml
+.idea/dataSources/f8a3bcfc-9a23-4bbd-90f4-6a833a0a4425/
+

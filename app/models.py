@@ -17,11 +17,12 @@ class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(64), unique=True, index=True)
+    phone = db.Column(db.String(64), unique=True, nullable=False)
     username = db.Column(db.String(64), unique=True, index=True)
     role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
     password_hash = db.Column(db.String(128))
     alarm_info = db.Column(db.Text, default='{}')
-    alarms = db.relationship("Alarm", backref='alarm')
+    alarms = db.relationship("Alarm", backref='alarm', lazy='dynamic')
 
     @property
     def password(self):
@@ -42,7 +43,7 @@ class LotterysInfo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     expect = db.Column(db.String(64))
-    opencode = db.Column(db.String(64))
+    opencode = db.Column(db.Text)
     opentime = db.Column(db.DateTime)
     opentimestamp = db.Column(db.Integer)
 
@@ -53,7 +54,7 @@ class Alarm(db.Model):
     __tablename__ = 'alarms'
     id = db.Column(db.Integer, primary_key=True)
     alarm_info = db.Column(db.Text)
-    user = db.relationship(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     create_time = db.Column(db.DateTime)
 
     def __repr__(self):
