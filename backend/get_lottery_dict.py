@@ -6,12 +6,11 @@
 
 import os
 import json
-from config import Config
 
 from bs4 import BeautifulSoup
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
-MASTER_URL = Config.MASTER_URL
+MASTER_URL = 'http://f.apiplus.net/'
 
 def open_html(filename):
     html = open(filename, 'r', encoding='utf-8').read()

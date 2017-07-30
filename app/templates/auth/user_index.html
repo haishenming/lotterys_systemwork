@@ -9,14 +9,66 @@
 </div>
  <div class="col-md-4">
     {{ wtf.quick_form(form) }}
-</div>
     {% if error %}
         <p>{{ error }}</p>
     {% endif %}
-    <br/>
- {% for info in alarm_info %}
-    {{ info }}
- {% endfor %}
+ <br/>
+</div>
+
+<div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>彩票名称</th>
+          <th>相同期数</th>
+          <th>是否检查顺序</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for info in alarm_info %}
+        <tr class="{% if info["is_start"] %}{% else %}warning{% endif %}" >
+           <td></td>
+          <td>{{ info['lottery_name'] }}</td>
+          <td>{{ info['same_num'] }}</td>
+          <td>{{ info['same_num'] }}</td>
+            {% if info["is_start"] %}
+           <td><button class="btn btn-default">
+            <a href="{{ url_for('auth.updata_rule',username=current_user.username,
+                    data=info['id']
+                    , type='forbidden' ) }}">
+            禁用
+            </a>
+            </button></td>
+            {% else %}
+            <td><button class="btn btn-danger">
+             <a href="{{ url_for('auth.updata_rule',username=current_user.username, data=info['id'], type='start' ) }}">
+            启用
+            </a>
+            </button></td>
+            {% endif %}
+           <td><button class="btn btn-danger">
+               <a href="{{ url_for('auth.updata_rule',username=current_user.username, data=info['id'], type='delete' ) }}">
+            删除
+            </a></button></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+JSON.stringify()
+
+</script>
+
+
 {% endblock %}
 
 
