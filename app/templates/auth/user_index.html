@@ -33,7 +33,7 @@
            <td></td>
           <td>{{ info['lottery_name'] }}</td>
           <td>{{ info['same_num'] }}</td>
-          <td>{{ info['same_num'] }}</td>
+          <td>{{ info['is_order'] }}</td>
             {% if info["is_start"] %}
            <td><button class="btn btn-default">
             <a href="{{ url_for('auth.updata_rule',username=current_user.username,

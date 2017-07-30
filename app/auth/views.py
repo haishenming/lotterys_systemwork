@@ -106,8 +106,4 @@ def updata_rule(username, data, type):
     else:
         error = "未知的操作类型"
     user.alarm_info = json.dumps(alarm_info)
-    return render_template('auth/user_index.html',
-                           username=username,
-                           alarm_info=alarm_info,
-                           form=form,
-                           error=error)
+    return redirect(url_for('.user_index', username=username))

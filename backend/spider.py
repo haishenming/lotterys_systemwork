@@ -6,6 +6,7 @@ import datetime
 import time
 import json
 
+
 import requests
 
 from backend.models import *
@@ -21,7 +22,7 @@ def request_data(url, name):
             data_dict = requests.get(url).json()
             data_dict['name'] = name
             data_dict['error'] = ''
-            print(data_dict)
+            print(data_dict['name'], data_dict['error'])
         except Exception as e:
             # 有错就返回错误
             print(e, '稍后重试')
@@ -71,22 +72,12 @@ def check(lottery_info_now, info):
     检查是否需要发送短信并返回号码和短信内容
     '''
     SMS = info['username'] + ' 你好，您所订阅的信息有新的动向。\n\n'
-    info = {'username': 'haishyen',
-            'phone': '17723503316',
-            'alarm_info': [{'id': '3b929f83f15f4b66753952f2e17b1f05',
-                            'lottery_name': '河南中原风采22选5',
-                            'same_num': 2,
-                            'is_order': True,
-                            'is_start': True},
-                           {'id': '3b929f83f15f4b66753952f2e17b1f05',
-                            'lottery_name': '埃及二分彩',
-                            'same_num': 2,
-                            'is_order': True,
-                            'is_start': True}
-                           ]}
     messages = SMS
+    print("用户用户配置中有新获取的彩票信息。。。。。。")
+    print("检查是否有符合要求的信息。。。。。。")
     for new_lottery in lottery_info_now:
         for alarm in info['alarm_info']:
+            print("正在检查{}".format(alarm['lottery_name']))
             if new_lottery.name == alarm['lottery_name']:
                 same_info = check_info_same(new_lottery.name, new_lottery.opencode, order=alarm['is_order'])
                 if same_info['number'] >= alarm['same_num']:
@@ -94,6 +85,7 @@ def check(lottery_info_now, info):
                         "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，\n具体期数：{}。\n\n".\
                             format(same_info['name'], same_info['number'],same_info['order'],same_info['data'])
                     messages += message
+    print("检查完毕")
     return (messages, info['phone'])
 
     # for same_info in same_infos:
@@ -111,26 +103,32 @@ def send_SMS(new_info):
     SMS = ''
     user_infos = get_info()
     for user in user_infos:
+        print('检查用户{}的配置'.format(user['username']))
         messages, phone = check(new_info, user)
+        if '彩票名称' in messages and '具体期数' in messages:
+            print("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
+        else:
+            print("没有要发送的信息！")
 
 
 def updata():
     new_info = []
     for data in get_data():
         if not data['error']:
-            # name = data.get('name')
-            # expect = data.get('data')[0].get('expect')
-            # opencode = data.get('data')[0].get('opencode')
-            # opentime = data.get('data')[0].get('opentime')
-            # opentime = datetime.datetime.strptime(opentime, '%Y-%m-%d %X')
-            # opentimestamp = data.get('data')[0].get('opentimestamp')
-
-            name = '河南中原风采22选5'
-            expect = 20172015
+            name = data.get('name')
+            expect = data.get('data')[0].get('expect')
             opencode = data.get('data')[0].get('opencode')
             opentime = data.get('data')[0].get('opentime')
             opentime = datetime.datetime.strptime(opentime, '%Y-%m-%d %X')
             opentimestamp = data.get('data')[0].get('opentimestamp')
+
+            # 测试数据
+            # name = '河南中原风采22选5'
+            # expect = 20172015
+            # opencode = data.get('data')[0].get('opencode')
+            # opentime = data.get('data')[0].get('opentime')
+            # opentime = datetime.datetime.strptime(opentime, '%Y-%m-%d %X')
+            # opentimestamp = data.get('data')[0].get('opentimestamp')
 
             lotterys_info = LotterysInfo(
                 name=name,
@@ -147,10 +145,13 @@ def updata():
                 session.add(lotterys_info)
                 session.commit()
                 new_info.append(lotterys_info)
+    print("准备发送短信。。。。。。")
     send_SMS(new_info)
 
 def spider():
-    updata()
+    while True:
+        updata()
+        time.sleep(600)
 
 if __name__ == '__main__':
     spider()
