@@ -33,7 +33,7 @@ import requests
 from models import *
 from config import *
 
-engine = create_engine('mysql+pymysql://root:haishenming@127.0.0.1:3306/lotterydb?charset=utf8mb4')
+engine = create_engine('mysql+pymysql://root:haishenming123@127.0.0.1:3306/lotterydb?charset=utf8mb4')
 Session = sessionmaker(bind=engine)
 session = Session()
 
