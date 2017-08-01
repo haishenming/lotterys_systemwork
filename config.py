@@ -2,7 +2,7 @@ import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 import json
 
-MYSQLDB = 'mysql+pymysql://root:Haishen@127.0.0.1:3306/lotterydb'
+MYSQLDB = 'mysql+pymysql://root:haishenming@127.0.0.1:3306/lotterydb'
 SQLITE = 'sqlite:///{}'.format(os.path.join(basedir, 'db.sqlite'))
 print(os.path.join(basedir, 'data.sqlite'))
 

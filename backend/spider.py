@@ -28,13 +28,10 @@ ch2.setFormatter(formatter)
 logger.addHandler(ch)
 logger.addHandler(ch2)
 
-
-
-
 import requests
 
-from backend.models import *
-from backend.config import *
+from models import *
+from config import *
 
 engine = create_engine('mysql+pymysql://root:Haishen@127.0.0.1:3306/lotterydb?charset=utf8mb4')
 Session = sessionmaker(bind=engine)
