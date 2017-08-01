@@ -5,6 +5,30 @@
 import datetime
 import time
 import json
+from send_massage import send_message
+
+import logging
+
+# 配置日志文件和日志级别
+ch = logging.StreamHandler()
+ch2 = logging.FileHandler('logging.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+logger = logging.getLogger('root')
+
+# Set default log level
+logger.setLevel(logging.INFO)
+ch2.setLevel(logging.INFO)
+
+ch.setFormatter(formatter)
+ch2.setFormatter(formatter)
+
+# add ch to logger
+# The final log level is the higher one between the default and the one in handler
+logger.addHandler(ch)
+logger.addHandler(ch2)
+
+
 
 
 import requests
@@ -22,9 +46,11 @@ def request_data(url, name):
             data_dict = requests.get(url).json()
             data_dict['name'] = name
             data_dict['error'] = ''
+            logger.info(data_dict['name'] + '-' + data_dict['error'])
             print(data_dict['name'], data_dict['error'])
         except Exception as e:
             # 有错就返回错误
+            logger.warn(e)
             print(e, '稍后重试')
             time.sleep(1)
             continue
@@ -77,8 +103,8 @@ def check(lottery_info_now, info):
     print("检查是否有符合要求的信息。。。。。。")
     for new_lottery in lottery_info_now:
         for alarm in info['alarm_info']:
-            print("正在检查{}".format(alarm['lottery_name']))
             if new_lottery.name == alarm['lottery_name']:
+                print("正在检查{}".format(alarm['lottery_name']))
                 same_info = check_info_same(new_lottery.name, new_lottery.opencode, order=alarm['is_order'])
                 if same_info['number'] >= alarm['same_num']:
                     message = \
@@ -87,14 +113,6 @@ def check(lottery_info_now, info):
                     messages += message
     print("检查完毕")
     return (messages, info['phone'])
-
-    # for same_info in same_infos:
-    #
-    #     SMS =
-
-
-
-
 
 def send_SMS(new_info):
     '''
@@ -106,8 +124,19 @@ def send_SMS(new_info):
         print('检查用户{}的配置'.format(user['username']))
         messages, phone = check(new_info, user)
         if '彩票名称' in messages and '具体期数' in messages:
+            logger.info("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             print("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
+            for i in range(5):
+                ret = send_message(phone, messages)
+                if ret.get('error', 1) == 0:
+                    logger.info('短信发送成功')
+                    break
+                else:
+                    logger.warn('短信发送失败，重新发送！')
+                    continue
+            logger.warn('重发次数超过5次，此次发送失败，请检查接口！')
         else:
+            logger.info("没有要发送的信息！")
             print("没有要发送的信息！")
 
 

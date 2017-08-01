@@ -2,16 +2,19 @@
 # -*- coding: utf-8 -*-
 import requests
 import json
+import datetime
 
-def send_messag_example():
+def send_message(phone, message):
     resp = requests.post("http://sms-api.luosimao.com/v1/send.json",
-    auth=("api", "key-eb3829cd732d929feb06556c063010d11"),
+    auth=("api", "key-44b9b31582fdbb959202b6e20114bc17"),
     data={
-	"mobile": "17723503316",
-	"message": "hello,wolrd【luosimao】"
+	"mobile": str(phone),
+	"message": message+"【海神名】"
     },timeout=3 , verify=False)
-    result =  json.loads( resp.content )
+    result = json.loads(resp.content)
     print(result)
+    return result
 
 if __name__ == "__main__":
-    send_messag_example()
+    send_message(17620338333, str(datetime.datetime.now()))
+    print(str(datetime.datetime.now()))
