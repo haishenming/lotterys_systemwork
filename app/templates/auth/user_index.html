@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}Flasky{% endblock %}
+{% block title %}彩票系统{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
     <h1>Hello, {% if current_user.is_authenticated %}{{ current_user.username }}{% else %}Stranger{% endif %}!</h1>
 </div>
- <div class="col-md-4">
+ <div class="col-md-4" id="formDiv">
     {{ wtf.quick_form(form) }}
     {% if error %}
         <p>{{ error }}</p>
@@ -35,28 +35,34 @@
           <td>{{ info['same_num'] }}</td>
           <td>{{ info['is_order'] }}</td>
             {% if info["is_start"] %}
-           <td><button class="btn btn-default">
-            <a href="{{ url_for('auth.updata_rule',username=current_user.username,
+           <td>
+            <a class="btn btn-danger" href="{{ url_for('auth.updata_rule',username=current_user.username,
                     data=info['id']
                     , type='forbidden' ) }}">
             禁用
             </a>
-            </button></td>
+            </td>
             {% else %}
-            <td><button class="btn btn-danger">
-             <a href="{{ url_for('auth.updata_rule',username=current_user.username, data=info['id'], type='start' ) }}">
+            <td>
+             <a class="btn btn-success" href="{{ url_for('auth.updata_rule',username=current_user.username, data=info['id'], type='start' ) }}">
             启用
             </a>
-            </button></td>
+            </td>
             {% endif %}
-           <td><button class="btn btn-danger">
-               <a href="{{ url_for('auth.updata_rule',username=current_user.username, data=info['id'], type='delete' ) }}">
+           <td>
+            <a class="btn btn-danger" href="{{ url_for('auth.updata_rule',username=current_user.username, data=info['id'], type='delete' ) }}">
             删除
-            </a></button></td>
+            </a></td>
         </tr>
       {% endfor %}
       </tbody>
     </table>
+    </div>
+    <br/>
+    <div>
+        {% for name in lottery_name_list %}
+        <div class="col-md-3"><a href="#" onclick="addName(this)">{{ name }}</a></div>
+        {% endfor %}
     </div>
 
 {% endblock %}
@@ -64,7 +70,11 @@
 {% block scripts %}
 {{ super() }}
 <script>
-JSON.stringify()
+function addName(ths) {
+    lotteryName = $(ths).text();
+    $('#lottery_name').val(lotteryName);
+}
+
 
 </script>
 

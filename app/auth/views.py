@@ -1,5 +1,6 @@
 import json
 import hashlib
+import os
 
 from flask import render_template, redirect, request, url_for, flash, session
 from flask_login import login_user, logout_user, login_required
@@ -7,6 +8,12 @@ from . import auth
 from ..models import User, LotterysInfo
 from .forms import LoginForm, RegistrationForm, AlarmInfoForm
 from .. import db
+from config import basedir
+
+with open(os.path.join(basedir, 'lottery_dict'), 'r') as f:
+    lottery_dict = json.loads(f.read())
+# lottery_dict = json.dump(os.path.join(basedir, 'lottery_dict'))
+print(lottery_dict)
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -26,13 +33,16 @@ def login():
 @login_required
 def user_index(username):
     error = ''
+    lottery_name_list = []
+    for url, name in lottery_dict.items():
+        lottery_name_list.append(name)
     user = db.session.query(User).filter_by(username=username).first()
     alarm_info = json.loads(user.alarm_info)
     # if not isinstance(alarm_info, list):
     #     alarm_info = {}
     form = AlarmInfoForm()
     md5 = hashlib.md5()
-    md5.update(json.dumps([form.lottery_name.data, form.same_num.data]).encode(encoding='utf-8'))
+    md5.update(json.dumps([form.lottery_name.data, form.same_num.data, str(form.is_order)]).encode(encoding='utf-8'))
     if form.validate_on_submit():
         new_info = {
             'id': md5.hexdigest(),
@@ -51,7 +61,8 @@ def user_index(username):
                            username=username,
                            alarm_info=alarm_info,
                            form=form,
-                           error=error)
+                           error=error,
+                           lottery_name_list = lottery_name_list)
 
 
 @auth.route('/logout')
@@ -90,7 +101,7 @@ def updata_rule(username, data, type):
         if a['id'] == info_id:
             info_index = i
             old_info = a
-    alarm_info.pop(i)
+    alarm_info.pop(info_index)
 
     type = type
     if type == 'forbidden':
