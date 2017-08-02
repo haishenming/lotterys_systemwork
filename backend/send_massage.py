@@ -11,7 +11,7 @@ def send_message(phone, message):
 	"mobile": str(phone),
 	"message": message+"【海神名】"
     },timeout=3 , verify=False)
-    result = json.loads(resp.content)
+    result = resp.json()
     print(result)
     return result
 
