@@ -33,7 +33,7 @@ import requests
 from models import *
 from config import *
 
-engine = create_engine('mysql+pymysql://root:haishenming123@127.0.0.1:3306/lotterydb?charset=utf8mb4')
+engine = create_engine('mysql+pymysql://root:Haishen@127.0.0.1:3306/lotterydb?charset=utf8mb4')
 Session = sessionmaker(bind=engine)
 session = Session()
 
@@ -85,7 +85,7 @@ def check_info_same(lottery_name, opencode, order=False):
         else:
             ''.split()
             if sorted(info.opencode.split(',')) == sorted(opencode.split(",")):
-                ret.append(info)
+                ret.append(info.opencode)  # 返回具体开奖号
 
     return {"name": lottery_name, "number": len(ret), 'order':order, 'data': ret}
 
@@ -103,10 +103,12 @@ def check(lottery_info_now, info):
             if new_lottery.name == alarm['lottery_name']:
                 print("正在检查{}".format(alarm['lottery_name']))
                 same_info = check_info_same(new_lottery.name, new_lottery.opencode, order=alarm['is_order'])
+                one_pice = same_info['data'][0]
+
                 if same_info['number'] >= alarm['same_num']:
                     message = \
-                        "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，\n具体期数：{}。\n\n".\
-                            format(same_info['name'], same_info['number'],same_info['order'],same_info['data'])
+                        "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，\n开奖号：{}。\n\n".\
+                            format(same_info['name'], same_info['number'],same_info['order'],same_info['data'][0])
                     messages += message
     print("检查完毕")
     return (messages, info['phone'])
