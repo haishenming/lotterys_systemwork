@@ -5,7 +5,7 @@
 import datetime
 import time
 import json
-from send_massage import send_message
+from send_massage import send_message, phone_up
 
 import logging
 
@@ -77,6 +77,7 @@ def check_info_same(lottery_name, opencode, order=False):
     检查并返回相同的彩票信息
     '''
     ret = []
+    is_five = False
     lottery_infos = session.query(LotterysInfo).filter_by(name=lottery_name)
     for info in lottery_infos:
         if order:
@@ -85,9 +86,12 @@ def check_info_same(lottery_name, opencode, order=False):
         else:
             ''.split()
             if sorted(info.opencode.split(',')) == sorted(opencode.split(",")):
-                ret.append(info.opencode)  # 返回具体开奖号
+                ret.append(info)  # 返回具体开奖号
+        if len(ret) > 5:
+            ret = ret[-5:]
+            is_five = True
 
-    return {"name": lottery_name, "number": len(ret), 'order':order, 'data': ret}
+    return {"name": lottery_name, "number": len(ret), 'order':order, 'data': ret, 'is_five':is_five}
 
 
 def check(lottery_info_now, info):
@@ -106,9 +110,13 @@ def check(lottery_info_now, info):
                 one_pice = same_info['data'][0]
 
                 if same_info['number'] >= alarm['same_num']:
+                    inner_mess = ''
+                    if info['is_five']:
+                        inner_mess = "\n由于次数过多无法显示，一下数据仅显示最近五次历史相同"
                     message = \
-                        "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，\n开奖号：{}。\n\n".\
-                            format(same_info['name'], same_info['number'],same_info['order'],same_info['data'][0])
+                        "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，{}\n具体期数：{}，\n历史开奖号：{}。\n\n".\
+                            format(same_info['name'], same_info['number'],same_info['order'],\
+                                   inner_mess,same_info['data'],same_info['data'][0].opencode)
                     messages += message
     print("检查完毕")
     return (messages, info['phone'])
@@ -126,14 +134,23 @@ def send_SMS(new_info):
             logger.info("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             print("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             for i in range(5):
-                ret = send_message(phone, messages)
-                if ret.get('error', 1) == 0:
+                ret1 = send_message(phone, messages)
+                if ret1.get('error', 1) == 0:
                     logger.info('短信发送成功')
                     break
                 else:
                     logger.warn('短信发送失败，重新发送！')
                     continue
             logger.warn('重发次数超过5次，此次发送失败，请检查接口！')
+            for i in range(5):
+                ret1 = phone_up(phone, messages)
+                if ret1.get('error', 1) == 0:
+                    logger.info('电话拨打成功')
+                    break
+                else:
+                    logger.warn('电话拨打失败，重拨！')
+                    continue
+            logger.warn('重拨次数超过5次，此次发送失败，请检查接口！')
         else:
             logger.info("没有要发送的信息！")
             print("没有要发送的信息！")

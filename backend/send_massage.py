@@ -15,6 +15,17 @@ def send_message(phone, message):
     print(result)
     return result
 
+def phone_up(phone):
+    resp = requests.post("http://voice-api.luosimao.com/v1/verify.json",
+    auth=("api", "key-3149f95d5dbc11a3a8eeee054beb0bbb"),
+    data={
+	"mobile": str(phone),
+	"code": 1234
+    },timeout=3 , verify=False)
+    result = resp.json()
+    print(result)
+    return result
+
 if __name__ == "__main__":
-    send_message(17620338333, str(datetime.datetime.now()))
+    phone_up(17620338333)
     print(str(datetime.datetime.now()))
