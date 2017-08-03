@@ -143,7 +143,7 @@ def send_SMS(new_info):
                     continue
             logger.warn('重发次数超过5次，此次发送失败，请检查接口！')
             for i in range(5):
-                ret1 = phone_up(phone, messages)
+                ret1 = phone_up(phone)
                 if ret1.get('error', 1) == 0:
                     logger.info('电话拨打成功')
                     break
