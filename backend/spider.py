@@ -196,7 +196,7 @@ def updata():
 def spider():
     while True:
         updata()
-        time.sleep(600)
+        time.sleep(60)
 
 if __name__ == '__main__':
     spider()
