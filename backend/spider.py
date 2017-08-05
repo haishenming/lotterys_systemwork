@@ -116,7 +116,7 @@ def check(lottery_info_now, info):
                     message = \
                         "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，\n历史相同期数{}，{}\n具体期数：{}，\n历史开奖号：{}。\n\n".\
                             format(same_info['name'], same_info['number'],same_info['order'],\
-                                   len(same_info['num']), inner_mess, same_info['data'],same_info['data'][0].opencode)
+                                   same_info['num'], inner_mess, same_info['data'],same_info['data'][0].opencode)
                     messages += message
     print("检查完毕")
     return (messages, info['phone'])
