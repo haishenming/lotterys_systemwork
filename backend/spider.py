@@ -91,7 +91,7 @@ def check_info_same(lottery_name, opencode, order=False):
             ret = ret[-5:]
             is_five = True
 
-    return {"name": lottery_name, "number": len(ret), 'order':order, 'data': ret, 'is_five':is_five}
+    return {"name": lottery_name, "number": len(ret), 'order':order, 'data': ret, 'is_five':is_five, 'num': len(ret)}
 
 
 def check(lottery_info_now, info):
@@ -114,9 +114,9 @@ def check(lottery_info_now, info):
                     if same_info['is_five']:
                         inner_mess = "\n由于次数过多无法显示，以下数据仅显示最近五次历史相同"
                     message = \
-                        "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，{}\n具体期数：{}，\n历史开奖号：{}。\n\n".\
+                        "彩票名称：{}，\n相同期数：{}，\n是否检查顺序：{}，\n历史相同期数{}，{}\n具体期数：{}，\n历史开奖号：{}。\n\n".\
                             format(same_info['name'], same_info['number'],same_info['order'],\
-                                   inner_mess,same_info['data'],same_info['data'][0].opencode)
+                                   len(same_info('num')), inner_mess,same_info['data'],same_info['data'][0].opencode)
                     messages += message
     print("检查完毕")
     return (messages, info['phone'])
