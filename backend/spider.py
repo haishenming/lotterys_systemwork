@@ -40,18 +40,19 @@ session = Session()
 def request_data(url, name):
     while True:
         try:
-            data_dict = requests.get(url).json()
+            data_dict = requests.get(url, timeout=5).json()
             data_dict['name'] = name
             data_dict['error'] = ''
             logger.info(data_dict['name'] + '-' + data_dict['error'])
             print(data_dict['name'], data_dict['error'])
+            break
         except Exception as e:
             # 有错就返回错误
             logger.warn(e)
             print(e, '稍后重试')
             time.sleep(1)
             continue
-        return data_dict
+    return data_dict
 
 
 def get_data():
