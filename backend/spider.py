@@ -59,6 +59,7 @@ def get_data():
     global DATA_LIST
     lottery_dict = LOTTERY_DICR
     for url, name in lottery_dict.items():
+        time.sleep(5)
         yield request_data(url, name)
 
 def get_info():
