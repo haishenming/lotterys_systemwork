@@ -6,6 +6,7 @@ import datetime
 import time
 import json
 from send_massage import send_message, phone_up
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 import logging
 
@@ -196,9 +197,11 @@ def updata():
     send_SMS(new_info)
 
 def spider():
-    while True:
-        updata()
-        time.sleep(60)
+    updata()
+    scheduler = BlockingScheduler()
+    scheduler.add_job(updata, 'interval', seconds=300, id='updata')
+    scheduler.start()
+
 
 if __name__ == '__main__':
     spider()
