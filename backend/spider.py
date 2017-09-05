@@ -51,7 +51,7 @@ def request_data(url, name):
             # 有错就返回错误
             logger.warn(e)
             print(e, '稍后重试')
-            time.sleep(1)
+            # time.sleep(1)
             continue
     return data_dict
 
