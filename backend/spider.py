@@ -130,10 +130,10 @@ def send_SMS(new_info):
     '''
     SMS = ''
     user_infos = get_info()
-    for user in user_infos:
-        print('检查用户{}的配置'.format(user['username']))
-        messages, phone = check(new_info, user)
-        if '彩票名称' in messages and '具体期数' in messages:
+    for info in user_infos:
+        print('检查用户{}的配置'.format(info['username']))
+        messages, phone = check(new_info, info)
+        if '彩票名称' in messages and '具体期数' in messages and info["is_start"]:
             logger.info("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             print("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             for i in range(5):
