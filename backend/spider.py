@@ -51,7 +51,7 @@ def request_data(url, name):
             # 有错就返回错误
             logger.warn(e)
             print(e, '稍后重试')
-            # time.sleep(1)
+            time.sleep(1)
             continue
     return data_dict
 
@@ -60,7 +60,7 @@ def get_data():
     global DATA_LIST
     lottery_dict = LOTTERY_DICR
     for url, name in lottery_dict.items():
-        time.sleep(2)
+        # time.sleep(2)
         yield request_data(url, name)
 
 def get_info():
