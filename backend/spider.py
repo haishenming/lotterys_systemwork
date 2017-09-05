@@ -107,7 +107,7 @@ def check(lottery_info_now, info):
     print("检查是否有符合要求的信息。。。。。。")
     for new_lottery in lottery_info_now:
         for alarm in info['alarm_info']:
-            if new_lottery.name == alarm['lottery_name']:
+            if new_lottery.name == alarm['lottery_name'] and alarm["is_start"]:
                 print("正在检查{}".format(alarm['lottery_name']))
                 same_info = check_info_same(new_lottery.name, new_lottery.opencode, order=alarm['is_order'])
                 one_pice = same_info['data'][0]
@@ -133,7 +133,7 @@ def send_SMS(new_info):
     for info in user_infos:
         print('检查用户{}的配置'.format(info['username']))
         messages, phone = check(new_info, info)
-        if '彩票名称' in messages and '具体期数' in messages and info["alarm_info"]["is_start"]:
+        if '彩票名称' in messages and '具体期数' in messages:
             logger.info("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             print("检查完毕，正在发送短信\n---{}---, {}".format(messages, phone))
             for i in range(5):
